@@ -5,7 +5,11 @@
 const boardEl = document.getElementById("board");
 const sizeSelect = document.getElementById("size-select");
 const modeSelect = document.getElementById("mode-select");
+const playModeSelect = document.getElementById("play-mode-select");
 const restartBtn = document.getElementById("restart-btn");
+const modeDescriptionEl = document.getElementById("mode-description");
+const mentalHintEl = document.getElementById("mental-hint");
+const targetStatEl = document.getElementById("target-stat");
 const targetValueEl = document.getElementById("target-value");
 const timeValueEl = document.getElementById("time-value");
 const bestValueEl = document.getElementById("best-value");
@@ -14,11 +18,20 @@ const overlayEl = document.getElementById("overlay");
 const finalTimeEl = document.getElementById("final-time");
 const recordMsgEl = document.getElementById("record-msg");
 const playAgainBtn = document.getElementById("play-again-btn");
+const mentalControlsEl = document.getElementById("mental-controls");
+const mentalStartBtn = document.getElementById("mental-start-btn");
+const mentalStopBtn = document.getElementById("mental-stop-btn");
 
 const STORAGE_PREFIX = "schulte-best-";
 
+const CLICK_DESCRIPTION =
+  "Pulsa los números en orden (1, 2, 3...) lo más rápido que puedas, sin mover la vista del centro.";
+const MENTAL_DESCRIPTION =
+  "No pinches nada: pulsa «Empezar», recorre los números en orden solo con la vista y pulsa «He terminado» al llegar al último.";
+
 let size = parseInt(sizeSelect.value, 10);
 let mode = modeSelect.value; // "numbers" | "letters" | "mixed"
+let playMode = playModeSelect.value; // "click" | "mental"
 let sequence = []; // orden correcto de etiquetas a pulsar, ej. ["1","2","3"] o ["1","A","2","B"]
 let targetIndex = 0;
 let total = size * size;
@@ -65,14 +78,19 @@ function generateSequence(totalCells, currentMode) {
   return Array.from({ length: totalCells }, (_, i) => String(i + 1));
 }
 
-function bestKey(n, m) {
-  return `${STORAGE_PREFIX}${n}x${n}-${m}`;
+// El modo mental mide una habilidad distinta (sin verificación de
+// clics, cronómetro parado a mano), así que guarda su propio récord
+// para no mezclarlo con el modo interactivo. El modo interactivo
+// conserva la clave de siempre para no perder récords ya guardados.
+function bestKey(n, m, pm) {
+  const suffix = pm === "mental" ? "-mental" : "";
+  return `${STORAGE_PREFIX}${n}x${n}-${m}${suffix}`;
 }
 
 // El récord se guarda como { time, date } para conservar siempre
 // la fecha en la que se consiguió, junto con el tiempo.
-function getBest(n, m) {
-  const raw = localStorage.getItem(bestKey(n, m));
+function getBest(n, m, pm) {
+  const raw = localStorage.getItem(bestKey(n, m, pm));
   if (!raw) return null;
 
   try {
@@ -87,9 +105,9 @@ function getBest(n, m) {
   }
 }
 
-function setBest(n, m, seconds) {
+function setBest(n, m, pm, seconds) {
   const record = { time: seconds, date: new Date().toISOString() };
-  localStorage.setItem(bestKey(n, m), JSON.stringify(record));
+  localStorage.setItem(bestKey(n, m, pm), JSON.stringify(record));
 }
 
 function formatTime(seconds) {
@@ -115,7 +133,7 @@ function shuffle(array) {
 }
 
 function updateBestDisplay() {
-  const best = getBest(size, mode);
+  const best = getBest(size, mode, playMode);
   if (best) {
     bestValueEl.textContent = formatTime(best.time);
     bestDateEl.textContent = best.date ? formatDate(best.date) : "";
@@ -128,6 +146,7 @@ function updateBestDisplay() {
 function buildBoard() {
   size = parseInt(sizeSelect.value, 10);
   mode = modeSelect.value;
+  playMode = playModeSelect.value;
   total = size * size;
   sequence = generateSequence(total, mode);
   targetIndex = 0;
@@ -138,6 +157,14 @@ function buildBoard() {
   targetValueEl.textContent = sequence[0];
   overlayEl.classList.add("hidden");
   updateBestDisplay();
+
+  const isMental = playMode === "mental";
+  modeDescriptionEl.textContent = isMental ? MENTAL_DESCRIPTION : CLICK_DESCRIPTION;
+  mentalHintEl.classList.toggle("hidden", !isMental);
+  targetStatEl.classList.toggle("hidden", isMental);
+  mentalControlsEl.classList.toggle("hidden", !isMental);
+  mentalStartBtn.disabled = false;
+  mentalStopBtn.disabled = true;
 
   const shuffled = shuffle([...sequence]);
 
@@ -151,11 +178,17 @@ function buildBoard() {
     cell.textContent = label;
     cell.dataset.value = label;
     cell.dataset.index = index;
-    cell.tabIndex = 0;
-    cell.setAttribute("role", "button");
-    cell.setAttribute("aria-label", label);
-    cell.addEventListener("click", () => handleCellClick(cell, label));
-    cell.addEventListener("keydown", (e) => handleCellKeydown(e, cell, label, index));
+    if (isMental) {
+      // En modo mental no se pincha ni se navega con teclado: solo se
+      // mira el tablero mientras corre el cronómetro manual.
+      cell.setAttribute("aria-hidden", "true");
+    } else {
+      cell.tabIndex = 0;
+      cell.setAttribute("role", "button");
+      cell.setAttribute("aria-label", label);
+      cell.addEventListener("click", () => handleCellClick(cell, label));
+      cell.addEventListener("keydown", (e) => handleCellKeydown(e, cell, label, index));
+    }
     boardEl.appendChild(cell);
   });
 }
@@ -221,10 +254,10 @@ function finishGame() {
   const elapsed = (performance.now() - startTime) / 1000;
   timeValueEl.textContent = formatTime(elapsed);
 
-  const best = getBest(size, mode);
+  const best = getBest(size, mode, playMode);
   let recordMsg = "";
   if (best === null || elapsed < best.time) {
-    setBest(size, mode, elapsed);
+    setBest(size, mode, playMode, elapsed);
     recordMsg = "🏆 ¡Nuevo mejor tiempo!";
   } else {
     recordMsg = `Tu mejor tiempo sigue siendo ${formatTime(best.time)} (${formatDate(best.date)})`;
@@ -236,9 +269,28 @@ function finishGame() {
   overlayEl.classList.remove("hidden");
 }
 
+// Modo mental: el propio jugador arranca y para el cronómetro, sin
+// que el juego verifique nada por clics.
+function startMentalTimer() {
+  if (finished || startTime !== null) return;
+  startTime = performance.now();
+  timerId = setInterval(updateTimer, 100);
+  mentalStartBtn.disabled = true;
+  mentalStopBtn.disabled = false;
+}
+
+function stopMentalTimer() {
+  if (finished || startTime === null) return;
+  mentalStopBtn.disabled = true;
+  finishGame();
+}
+
 sizeSelect.addEventListener("change", buildBoard);
 modeSelect.addEventListener("change", buildBoard);
+playModeSelect.addEventListener("change", buildBoard);
 restartBtn.addEventListener("click", buildBoard);
 playAgainBtn.addEventListener("click", buildBoard);
+mentalStartBtn.addEventListener("click", startMentalTimer);
+mentalStopBtn.addEventListener("click", stopMentalTimer);
 
 buildBoard();

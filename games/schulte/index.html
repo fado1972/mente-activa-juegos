@@ -12,7 +12,7 @@
   <header class="site-header">
     <a class="back-link" href="../../index.html">← Volver al inicio</a>
     <h1>🔢 Tabla de Schulte</h1>
-    <p>Pulsa los números en orden (1, 2, 3...) lo más rápido que puedas, sin mover la vista del centro.</p>
+    <p id="mode-description">Pulsa los números en orden (1, 2, 3...) lo más rápido que puedas, sin mover la vista del centro.</p>
   </header>
 
   <main>
@@ -30,18 +30,27 @@
           </select>
         </label>
         <label>
-          Modo
+          Contenido
           <select id="mode-select">
             <option value="numbers" selected>Solo números</option>
             <option value="letters">Solo letras</option>
             <option value="mixed">Números y letras</option>
           </select>
         </label>
+        <label>
+          Modo de juego
+          <select id="play-mode-select">
+            <option value="click" selected>Interactivo (pinchar)</option>
+            <option value="mental">Mental (sin tocar)</option>
+          </select>
+        </label>
         <button id="restart-btn" class="btn secondary">🔄 Nueva partida</button>
       </div>
 
+      <p class="mode-hint hidden" id="mental-hint">Modo mental: no pinches ninguna celda. Pulsa «Empezar», recorre los números en orden solo con la vista y pulsa «He terminado» al llegar al último.</p>
+
       <div class="stats-bar">
-        <div class="stat">
+        <div class="stat" id="target-stat">
           <span class="label">Buscando</span>
           <span class="value" id="target-value">1</span>
         </div>
@@ -54,6 +63,11 @@
           <span class="value" id="best-value">—</span>
           <span class="date" id="best-date"></span>
         </div>
+      </div>
+
+      <div class="mental-controls hidden" id="mental-controls">
+        <button id="mental-start-btn" class="btn">▶️ Empezar</button>
+        <button id="mental-stop-btn" class="btn secondary" disabled>⏹️ He terminado</button>
       </div>
 
       <div class="board" id="board"></div>
