@@ -1,20 +1,21 @@
 #!/usr/bin/env bash
-# Sincroniza el proyecto hacia el servidor de lab y recarga nginx.
-# Ejecutar desde tu WSL2/Ubuntu, en la raíz del proyecto o desde
-# cualquier sitio (el script se localiza solo).
+# Publica el proyecto en el "lab" local dentro de tu propio WSL2/Ubuntu
+# y recarga nginx. Ya no hace falta ningún servidor aparte: nginx corre
+# en la misma máquina donde ejecutas este script.
 #
-# Cache-busting: antes de subir, copia el proyecto a una carpeta
+# Primera vez: ejecuta antes "./deploy/setup-lab.sh" (una sola vez)
+# para instalar nginx y dejar el site configurado en el puerto 8090.
+#
+# Cache-busting: antes de publicar, copia el proyecto a una carpeta
 # temporal y añade "?v=<timestamp>" a los enlaces locales de .css/.js
 # en cada .html. Así el navegador coge siempre la versión nueva sin
-# tener que bajar el tiempo de caché (que sigue en 7 días). El repo
-# local no se toca para nada, solo la copia que se sube.
+# tener que bajar el tiempo de caché (que sigue en 30 días). El repo
+# local no se toca para nada, solo la copia que se publica.
 #
 # Uso:
 #   ./deploy/deploy.sh
 set -euo pipefail
 
-LAB_HOST="192.168.1.144"
-LAB_USER="gorke"
 LAB_PATH="/var/www/juegos"
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -37,14 +38,11 @@ find "$STAGING_DIR" -name '*.html' -print0 | while IFS= read -r -d '' file; do
     "$file"
 done
 
-echo "==> Sincronizando $STAGING_DIR -> $LAB_USER@$LAB_HOST:$LAB_PATH ..."
-rsync -avz --delete \
-  "$STAGING_DIR"/ "$LAB_USER@$LAB_HOST:$LAB_PATH"/
+echo "==> Publicando $STAGING_DIR -> $LAB_PATH (local) ..."
+rsync -a --delete "$STAGING_DIR"/ "$LAB_PATH"/
 
-echo "==> Comprobando y recargando nginx en el servidor ..."
-# -t: fuerza un pseudo-terminal para que sudo pueda pedir la contraseña
-# si el cache de sudo del servidor ya ha caducado (15 min por defecto).
-ssh -t "$LAB_USER@$LAB_HOST" "sudo nginx -t && sudo systemctl reload nginx"
+echo "==> Comprobando y recargando nginx ..."
+sudo nginx -t && sudo systemctl reload nginx
 
 echo ""
-echo "Publicado (v=$VERSION). Abre: http://$LAB_HOST:8090"
+echo "Publicado (v=$VERSION). Abre: http://localhost:8090"

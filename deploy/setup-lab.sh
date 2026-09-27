@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
-# Ejecutar UNA VEZ en el servidor de lab (Ubuntu/Debian) para dejarlo
-# preparado. Uso:
-#   ssh gorke@192.168.1.144 'bash ~/juegos-deploy/setup-lab.sh'
+# Ejecutar UNA VEZ, directamente en tu WSL2/Ubuntu (el "lab" ahora vive
+# ahí, no en una máquina aparte), para dejarlo preparado. Uso:
+#   ./deploy/setup-lab.sh
 set -euo pipefail
 
 SITE_NAME="juegos"

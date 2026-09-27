@@ -1,51 +1,56 @@
-# Despliegue en el servidor de lab
+# Lab de pruebas (local, dentro de tu WSL2)
 
-Sitio: **Mente Activa** (`192.168.1.144`, usuario `gorke`, nginx ya instalado).
+Sitio: **Mente Activa**. El "lab" ya no es una máquina aparte: nginx
+corre directamente en tu WSL2/Ubuntu, sirviendo en `http://localhost:8090`
+con document root en `/var/www/juegos`. Así no hace falta tener nada
+encendido aparte de tu propio PC.
 
-## Primera vez (configurar el servidor)
+(El servidor físico `fawno-lab` / `192.168.1.144` se dejó de usar para
+este proyecto por no compensar tenerlo encendido solo para esto; sigue
+existiendo para el resto de la práctica de DevOps si hace falta.)
 
-Desde tu WSL2/Ubuntu, con la clave SSH ya copiada al servidor:
+## Primera vez (configurar nginx en WSL2)
+
+Desde tu WSL2/Ubuntu, en la raíz del proyecto:
 
 ```bash
-# 1. Copiar esta carpeta deploy/ al servidor
-scp -r deploy gorke@192.168.1.144:~/juegos-deploy
-
-# 2. Ejecutar el script de configuración en el servidor
-ssh gorke@192.168.1.144 'bash ~/juegos-deploy/setup-lab.sh'
+./deploy/setup-lab.sh
 ```
 
-Esto deja nginx sirviendo un site nuevo en el puerto **8090**, con el
-document root en `/var/www/juegos` (vacío por ahora).
+Esto instala nginx si falta, crea `/var/www/juegos` y deja el site
+activo en el puerto **8090**.
 
 ## Cada vez que quieras publicar cambios
 
-Desde la raíz del proyecto, en tu WSL2/Ubuntu:
+Desde tu WSL2/Ubuntu, en la raíz del proyecto:
 
 ```bash
 ./deploy/deploy.sh
 ```
 
-Esto sincroniza todo el proyecto (menos la carpeta `deploy/`) hacia
-`/var/www/juegos` en el servidor y recarga nginx. Tarda un par de
-segundos; solo copia lo que ha cambiado.
-
-De paso, añade automáticamente `?v=<timestamp>` a los `.css`/`.js`
-referenciados en cada `.html` (sobre una copia temporal, tu repo local
-no se toca). Así el navegador siempre coge la versión nueva de esos
-archivos aunque estén en caché 30 días.
+Copia el proyecto a `/var/www/juegos` (con `rsync`, solo lo que ha
+cambiado) y recarga nginx. Añade automáticamente `?v=<timestamp>` a los
+`.css`/`.js` referenciados en cada `.html` sobre una copia temporal —
+tu repo local no se toca. Así el navegador siempre coge la versión
+nueva aunque esos archivos estén en caché 30 días.
 
 Después, abre en el navegador:
 
 ```
-http://192.168.1.144:8090
+http://localhost:8090
 ```
+
+## `deploy.ps1` (en pausa)
+
+Se creó para desplegar al servidor físico sin arrancar WSL2. Ahora que
+el lab vive dentro de WSL2, ya no aplica (WSL2 hace falta sí o sí para
+llegar a él) — se deja en el repo por si en el futuro se retoma un
+servidor de lab aparte.
 
 ## Notas
 
-- Si `rsync` no está disponible en tu WSL2: `sudo apt install rsync`.
 - Si cambias el puerto en `nginx-juegos.conf`, actualiza también el
-  mensaje final de `deploy.sh` (o simplemente recuerda el puerto nuevo).
-- Este servidor es tu entorno de pruebas/staging, no el hosting público
-  final — cuando la web esté lista para el mundo, hablamos de dominio
-  y hosting definitivo (Cloudflare Pages, como fawno.com, es una opción
-  natural dado que ya la conoces).
+  mensaje final de `deploy.sh`.
+- Este lab es tu entorno de pruebas, no el hosting público final: la
+  web ya está publicada de verdad en `https://juegos.fawno.com`
+  (Cloudflare, desde el repo `mente-activa-juegos`).
