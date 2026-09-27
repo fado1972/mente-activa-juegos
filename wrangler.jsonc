@@ -1,0 +1,12 @@
+{
+  // Proyecto puramente estatico: no hay Worker script (no "main"),
+  // solo se sirven los archivos que el "Build command" del panel de
+  // Cloudflare copia a dist/ (index.html, favicon.svg, assets/, games/).
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "mente-activa-juegos",
+  "compatibility_date": "2026-09-27",
+  "assets": {
+    "directory": "./dist",
+    "not_found_handling": "404-page"
+  }
+}
