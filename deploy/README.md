@@ -1,9 +1,15 @@
 # Lab de pruebas (local, dentro de tu WSL2)
 
 Sitio: **Mente Activa**. El "lab" ya no es una máquina aparte: nginx
-corre directamente en tu WSL2/Ubuntu, sirviendo en `http://localhost:8090`
-con document root en `/var/www/juegos`. Así no hace falta tener nada
-encendido aparte de tu propio PC.
+corre directamente en tu WSL2/Ubuntu, sirviendo en
+`http://mente-activa-wsl.local` (puerto 80) con document root en
+`/var/www/juegos`. Así no hace falta tener nada encendido aparte de tu
+propio PC.
+
+nginx escucha en el 80 pero solo responde a ese `server_name`
+concreto, así que si en el futuro añades otro proyecto (por ejemplo
+fawno-web) en el mismo nginx, cada uno tiene su propio nombre y su
+propio fichero en `sites-available` sin pisarse entre sí.
 
 (El servidor físico `fawno-lab` / `192.168.1.144` se dejó de usar para
 este proyecto por no compensar tenerlo encendido solo para esto; sigue
@@ -11,14 +17,16 @@ existiendo para el resto de la práctica de DevOps si hace falta.)
 
 ## Primera vez (configurar nginx en WSL2)
 
-Desde tu WSL2/Ubuntu, en la raíz del proyecto:
+1. Añade el alias al `hosts` de Windows (`C:\Windows\System32\drivers\etc\hosts`,
+   abierto como administrador): `127.0.0.1 mente-activa-wsl.local`.
+2. Desde tu WSL2/Ubuntu, en la raíz del proyecto:
 
-```bash
-./deploy/setup-lab.sh
-```
+   ```bash
+   ./deploy/setup-lab.sh
+   ```
 
-Esto instala nginx si falta, crea `/var/www/juegos` y deja el site
-activo en el puerto **8090**.
+   Esto instala nginx si falta, crea `/var/www/juegos` y deja el site
+   activo respondiendo a `mente-activa-wsl.local` en el puerto 80.
 
 ## Cada vez que quieras publicar cambios
 
@@ -37,7 +45,7 @@ nueva aunque esos archivos estén en caché 30 días.
 Después, abre en el navegador:
 
 ```
-http://localhost:8090
+http://mente-activa-wsl.local
 ```
 
 ## `deploy.ps1` (en pausa)

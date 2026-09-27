@@ -4,7 +4,7 @@
 # en la misma máquina donde ejecutas este script.
 #
 # Primera vez: ejecuta antes "./deploy/setup-lab.sh" (una sola vez)
-# para instalar nginx y dejar el site configurado en el puerto 8090.
+# para instalar nginx y dejar el site configurado en mente-activa-wsl.local.
 #
 # Cache-busting: antes de publicar, copia el proyecto a una carpeta
 # temporal y añade "?v=<timestamp>" a los enlaces locales de .css/.js
@@ -45,4 +45,4 @@ echo "==> Comprobando y recargando nginx ..."
 sudo nginx -t && sudo systemctl reload nginx
 
 echo ""
-echo "Publicado (v=$VERSION). Abre: http://localhost:8090"
+echo "Publicado (v=$VERSION). Abre: http://mente-activa-wsl.local"

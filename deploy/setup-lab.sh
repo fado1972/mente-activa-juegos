@@ -36,10 +36,11 @@ else
 fi
 
 if command -v ufw >/dev/null 2>&1 && sudo ufw status | grep -q "Status: active"; then
-  echo "==> ufw activo, abriendo el puerto 8090 ..."
-  sudo ufw allow 8090/tcp
+  echo "==> ufw activo, abriendo el puerto 80 ..."
+  sudo ufw allow 80/tcp
 fi
 
 echo ""
-echo "Listo. El sitio se servirá en http://$(hostname -I | awk '{print $1}'):8090"
+echo "Listo. El sitio responderá en http://mente-activa-wsl.local (puerto 80)."
+echo "Recuerda añadir '127.0.0.1 mente-activa-wsl.local' al hosts de Windows si aún no lo has hecho."
 echo "Ahora sube los ficheros con deploy/deploy.sh desde tu máquina de desarrollo."
