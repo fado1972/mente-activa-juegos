@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sudoku — Mente Activa</title>
+  <link rel="icon" href="../../favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="../../assets/css/style.css" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="site-header">
+    <a class="back-link" href="../../index.html">← Volver al inicio</a>
+    <h1>🔢 Sudoku</h1>
+    <p>Completa la cuadrícula 9×9 con los números del 1 al 9, sin repetir en fila, columna ni región.</p>
+  </header>
+
+  <main>
+    <div class="game-wrapper">
+      <div class="controls">
+        <label>
+          Dificultad
+          <select id="difficulty-select">
+            <option value="easy" selected>Fácil</option>
+            <option value="medium">Medio</option>
+            <option value="hard">Difícil</option>
+            <option value="expert">Experto</option>
+          </select>
+        </label>
+        <button id="notes-btn" class="btn secondary" title="Activar/desactivar modo notas">✏️ Notas</button>
+        <button id="check-btn" class="btn secondary">✓ Comprobar</button>
+        <button id="restart-btn" class="btn secondary">🔄 Nueva partida</button>
+      </div>
+
+      <div class="stats-bar">
+        <div class="stat">
+          <span class="label">Tiempo</span>
+          <span class="value" id="time-value">0.0s</span>
+        </div>
+        <div class="stat">
+          <span class="label">Mejor tiempo</span>
+          <span class="value" id="best-value">—</span>
+          <span class="date" id="best-date"></span>
+        </div>
+        <div class="stat">
+          <span class="label">Estado</span>
+          <span class="value" id="check-msg">—</span>
+        </div>
+      </div>
+
+      <div class="board-area">
+        <p class="loading" id="loading-msg">Generando puzzle…</p>
+        <div class="sudoku-board hidden" id="board"></div>
+      </div>
+
+      <div class="number-pad" id="number-pad">
+        <button class="number-btn" data-num="1">1</button>
+        <button class="number-btn" data-num="2">2</button>
+        <button class="number-btn" data-num="3">3</button>
+        <button class="number-btn" data-num="4">4</button>
+        <button class="number-btn" data-num="5">5</button>
+        <button class="number-btn" data-num="6">6</button>
+        <button class="number-btn" data-num="7">7</button>
+        <button class="number-btn" data-num="8">8</button>
+        <button class="number-btn" data-num="9">9</button>
+        <button class="number-btn erase" data-num="0">⌫</button>
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer">Sudoku · lógica y razonamiento paso a paso.</footer>
+
+  <div class="overlay hidden" id="overlay">
+    <div class="overlay-card">
+      <h2>¡Sudoku resuelto! 🎉</h2>
+      <div class="big-time" id="final-time">0.0s</div>
+      <div class="record" id="record-msg"></div>
+      <div class="overlay-actions">
+        <button class="btn" id="play-again-btn">Jugar de nuevo</button>
+        <a class="btn secondary" href="../../index.html">Volver al inicio</a>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

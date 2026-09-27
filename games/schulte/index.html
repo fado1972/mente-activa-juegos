@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tabla de Schulte — Mente Activa</title>
+  <link rel="icon" href="../../favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="../../assets/css/style.css" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="site-header">
+    <a class="back-link" href="../../index.html">← Volver al inicio</a>
+    <h1>🔢 Tabla de Schulte</h1>
+    <p>Pulsa los números en orden (1, 2, 3...) lo más rápido que puedas, sin mover la vista del centro.</p>
+  </header>
+
+  <main>
+    <div class="game-wrapper">
+      <div class="controls">
+        <label>
+          Tamaño
+          <select id="size-select">
+            <option value="3">3 × 3</option>
+            <option value="4">4 × 4</option>
+            <option value="5" selected>5 × 5</option>
+            <option value="6">6 × 6</option>
+            <option value="7">7 × 7</option>
+            <option value="8">8 × 8</option>
+          </select>
+        </label>
+        <label>
+          Modo
+          <select id="mode-select">
+            <option value="numbers" selected>Solo números</option>
+            <option value="letters">Solo letras</option>
+            <option value="mixed">Números y letras</option>
+          </select>
+        </label>
+        <button id="restart-btn" class="btn secondary">🔄 Nueva partida</button>
+      </div>
+
+      <div class="stats-bar">
+        <div class="stat">
+          <span class="label">Buscando</span>
+          <span class="value" id="target-value">1</span>
+        </div>
+        <div class="stat">
+          <span class="label">Tiempo</span>
+          <span class="value" id="time-value">0.0s</span>
+        </div>
+        <div class="stat">
+          <span class="label">Mejor tiempo</span>
+          <span class="value" id="best-value">—</span>
+          <span class="date" id="best-date"></span>
+        </div>
+      </div>
+
+      <div class="board" id="board"></div>
+    </div>
+  </main>
+
+  <footer class="site-footer">Tabla de Schulte · entrena atención y visión periférica.</footer>
+
+  <div class="overlay hidden" id="overlay">
+    <div class="overlay-card">
+      <h2>¡Completado! 🎉</h2>
+      <div class="big-time" id="final-time">0.0s</div>
+      <div class="record" id="record-msg"></div>
+      <div class="overlay-actions">
+        <button class="btn" id="play-again-btn">Jugar de nuevo</button>
+        <a class="btn secondary" href="../../index.html">Volver al inicio</a>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

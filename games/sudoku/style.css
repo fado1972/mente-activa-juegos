@@ -1,0 +1,249 @@
+.game-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+}
+
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 14px;
+  justify-content: center;
+}
+
+.controls label {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.controls select {
+  background: var(--bg-card);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 6px 10px;
+  font-size: 0.9rem;
+}
+
+.stats-bar {
+  display: flex;
+  gap: 24px;
+  flex-wrap: wrap;
+  justify-content: center;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 12px 24px;
+  min-width: 280px;
+}
+
+.stat {
+  text-align: center;
+}
+
+.stat .label {
+  display: block;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.stat .value {
+  display: block;
+  font-size: 1.4rem;
+  font-weight: 700;
+}
+
+.stat .date {
+  display: block;
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  min-height: 1em;
+}
+
+.board-area {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: min(94vw, 480px);
+}
+
+.loading {
+  color: var(--text-muted);
+  font-size: 0.95rem;
+}
+
+.sudoku-board {
+  display: grid;
+  grid-template-columns: repeat(9, 1fr);
+  background: var(--border);
+  border: 3px solid var(--accent);
+  border-radius: 10px;
+  overflow: hidden;
+  width: min(94vw, 480px);
+  aspect-ratio: 1 / 1;
+}
+
+.sudoku-board.hidden,
+.loading.hidden {
+  display: none;
+}
+
+.sudoku-cell {
+  background: var(--bg-card);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: clamp(1rem, 3.6vw, 1.5rem);
+  font-weight: 600;
+  cursor: pointer;
+  color: var(--accent);
+  border: 1px solid var(--border);
+  transition: background 0.1s ease;
+}
+
+.sudoku-cell.fixed {
+  color: var(--text);
+  font-weight: 800;
+  cursor: default;
+}
+
+.sudoku-cell.box-right {
+  border-right: 3px solid var(--accent);
+}
+
+.sudoku-cell.box-bottom {
+  border-bottom: 3px solid var(--accent);
+}
+
+.sudoku-cell.peer {
+  background: rgba(108, 139, 255, 0.08);
+}
+
+.sudoku-cell.same-value {
+  background: rgba(108, 139, 255, 0.18);
+}
+
+.sudoku-cell.selected {
+  background: rgba(108, 139, 255, 0.32);
+}
+
+.sudoku-cell:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: -2px;
+}
+
+.sudoku-cell.conflict {
+  color: var(--danger);
+}
+
+.sudoku-cell.check-wrong {
+  background: rgba(248, 113, 113, 0.35) !important;
+}
+
+.notes-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  width: 100%;
+  height: 100%;
+}
+
+.notes-grid .note {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: clamp(0.5rem, 1.6vw, 0.68rem);
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.number-pad {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+  max-width: 480px;
+}
+
+.number-btn {
+  width: 44px;
+  height: 44px;
+  border-radius: 8px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  color: var(--text);
+  font-size: 1.1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: border-color 0.12s ease;
+}
+
+.number-btn:hover {
+  border-color: var(--accent);
+}
+
+.number-btn.erase {
+  color: var(--text-muted);
+}
+
+.number-btn.complete {
+  background: transparent;
+  border-color: var(--border);
+  color: var(--text-muted);
+  opacity: 0.45;
+}
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(10, 12, 23, 0.75);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+}
+
+.overlay.hidden {
+  display: none;
+}
+
+.overlay-card {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 32px;
+  text-align: center;
+  max-width: 360px;
+  box-shadow: var(--shadow);
+}
+
+.overlay-card h2 {
+  margin-top: 0;
+}
+
+.overlay-card .big-time {
+  font-size: 2.2rem;
+  font-weight: 800;
+  color: var(--accent);
+  margin: 8px 0;
+}
+
+.overlay-card .record {
+  color: var(--success);
+  font-weight: 600;
+  min-height: 1.2em;
+}
+
+.overlay-actions {
+  margin-top: 20px;
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
